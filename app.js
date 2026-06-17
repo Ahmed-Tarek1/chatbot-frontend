@@ -10,7 +10,7 @@ const apiUrlInput = document.getElementById("api-url");
 const apiEndpointInput = document.getElementById("api-endpoint");
 
 const STORAGE_KEY = "serenity_settings";
-const defaults = { apiUrl: "https://huggingface.co/spaces/emam2231/mental-health-api", endpoint: "/chat" };
+const defaults = { apiUrl: "https://emam2231-mental-health-api.hf.space", endpoint: "/chat" };
 
 function loadSettings() {
   try {
