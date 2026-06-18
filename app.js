@@ -175,7 +175,8 @@ async function sendFeedback(btn, userMessage, botResponse) {
   if (wrap.classList.contains("voted")) return;
 
   const voteRaw = btn.dataset.vote;
-  const vote = voteRaw === "up" ? "thumbs_up" : "thumbs_down";
+  // Backend expects exactly "up" or "down" (Literal["up", "down"])
+  const vote = voteRaw === "up" ? "up" : "down";
   wrap.classList.add("voted");
   btn.classList.add("selected");
 
@@ -184,8 +185,10 @@ async function sendFeedback(btn, userMessage, botResponse) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        session_id: sessionId,
         vote,
-        comment: `user: ${userMessage} | bot: ${botResponse}`,
+        user_message: userMessage,
+        bot_response: botResponse,
       }),
     });
   } catch {}
