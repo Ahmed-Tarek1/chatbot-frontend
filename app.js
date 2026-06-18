@@ -10,6 +10,7 @@ const apiUrlInput = document.getElementById("api-url");
 const apiEndpointInput = document.getElementById("api-endpoint");
 
 const STORAGE_KEY = "serenity_settings";
+const SESSION_KEY = "serenity_session_id";
 const defaults = { apiUrl: "https://emam2231-mental-health-api.hf.space", endpoint: "/chat" };
 
 function loadSettings() {
@@ -25,6 +26,27 @@ function saveSettings(s) {
 }
 
 let settings = loadSettings();
+
+// ── Session handling ──
+// Keeps the same session_id for every message in this conversation,
+// persisted across page refreshes via sessionStorage (cleared when the tab closes).
+
+function getSessionId() {
+  let id = sessionStorage.getItem(SESSION_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem(SESSION_KEY, id);
+  }
+  return id;
+}
+
+function newSessionId() {
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(SESSION_KEY, id);
+  return id;
+}
+
+let sessionId = getSessionId();
 
 // ── Settings panel ──
 
@@ -78,6 +100,8 @@ document.addEventListener("click", (e) => {
 // ── Clear chat ──
 
 clearBtn.addEventListener("click", () => {
+  sessionId = newSessionId();
+
   chatArea.innerHTML = `
     <div class="welcome">
       <div class="welcome-icon">
@@ -220,7 +244,7 @@ async function send() {
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text }),
+      body: JSON.stringify({ message: text, session_id: sessionId }),
     });
 
     hideTyping();
