@@ -150,7 +150,8 @@ async function sendFeedback(btn, userMessage, botResponse) {
   const wrap = btn.closest(".feedback-btns");
   if (wrap.classList.contains("voted")) return;
 
-  const vote = btn.dataset.vote;
+  const voteRaw = btn.dataset.vote;
+  const vote = voteRaw === "up" ? "thumbs_up" : "thumbs_down";
   wrap.classList.add("voted");
   btn.classList.add("selected");
 
@@ -160,8 +161,7 @@ async function sendFeedback(btn, userMessage, botResponse) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         vote,
-        user_message: userMessage,
-        bot_response: botResponse,
+        comment: `user: ${userMessage} | bot: ${botResponse}`,
       }),
     });
   } catch {}
